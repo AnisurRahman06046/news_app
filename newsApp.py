@@ -1,58 +1,22 @@
-# import requests
-# from tkinter import Tk,Label
-# class NewsApp:
-#     def __init__(self):
-#         # fetch data
-#         self.data = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=9ddf978a1d1144b198c4913cf8f92731").json()
-#         print(self.data)
-        
-#         # bdData = requests.get("https://api.apitube.io/v1/news/articles")
-#         # initial gui load
-#         self.load_gui()
-        
-#         # load first news item
-#         self.load_news_item(0)
-        
-#     def load_gui(self):
-#         self.root = Tk()
-#         self.root.geometry("350x600")
-#         self.root.title("News App")
-#         self.root.resizable(0,0)
-#         self.root.configure(background='black')
-        
-    
-#     def clear(self):
-#         for i in self.root.pack_slaves():
-#             i.destroy()
-    
-#     def load_news_item(self,index):
-#         # clear the screen
-#         self.clear()
-#         # heading
-#         heading = Label(self.root,text=self.data['articles'][index]['title'],b='black',fg='white',wraplength=350,justify='center')
-#         heading.pack(pady=(10,20))
-#         heading.config(font=('verdana',50))
-#         self.root.mainloop()
-        
-# obj = NewsApp()
-
-
 import requests
-from tkinter import Tk, Label
-
+from tkinter import Tk, Label,Button, Frame, BOTH, LEFT,RIGHT
+from PIL import Image,ImageTk
+from urllib.request import urlopen,Request
+import io 
+import webbrowser
 class NewsApp:
     def __init__(self):
         # fetch data
         # self.data = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=9ddf978a1d1144b198c4913cf8f92731").json()
         self.data = requests.get("https://newsdata.io/api/1/latest?country=bd&apikey=pub_511242bc4a4b82b34f0192f0d27534c645d43").json()
         
-        print(self.data)
+        # print(self.data)
         
         # initial GUI load
         self.load_gui()
         
         # load the first news item
-        self.load_news_item(1)
+        self.load_news_item(0)
         
     def load_gui(self):
         self.root = Tk()
@@ -68,6 +32,30 @@ class NewsApp:
     def load_news_item(self, index):
         # clear the screen
         self.clear()
+        
+        # image
+        # img_url = self.data['results'][index]['image_url']
+        # raw_image_data = urlopen(img_url).read()
+        # resized_img=Image.open(io.BytesIO(raw_image_data)).resize((350,250),Image.ANTIALIAS)
+        # photo=ImageTk.PhotoImage(resized_img)
+        
+        # img_label  = Label(self.root,image=photo)
+        # img_label.pack()
+         # Load and display image
+        img_url = self.data['results'][index]['image_url']
+        
+        # Adding User-Agent header to the request
+        req = Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
+        raw_image_data = urlopen(req).read()
+        
+        image = Image.open(io.BytesIO(raw_image_data))
+        resized_img = image.resize((350, 250))
+        photo = ImageTk.PhotoImage(resized_img)
+        
+        img_label = Label(self.root, image=photo)
+        img_label.image = photo  # Keep a reference to the image to prevent garbage collection
+        img_label.pack()
+
         # heading
         heading = Label(
             self.root,
@@ -92,7 +80,132 @@ class NewsApp:
         )
         details.pack(pady=(2, 20))
         details.config(font=('verdana', 12))
+        
+        # frame for button
+        frame = Frame(self.root,bg='black')
+        frame.pack(expand=True,fill=BOTH)
+        
+        prevBtn = Button(frame,text='Prev',width=10,height=1)
+        prevBtn.pack(side=LEFT)
+        
+        nextBtn = Button(frame,text='Next',width=10,height=1)
+        nextBtn.pack(side=RIGHT)
+        
+        readBtn = Button(frame,text='Read More',width=10,height=1,command=lambda:self.open_link(self.data['results'][index]['link']))
+        readBtn.place(relx=0.5, rely=0.5, anchor='center')
+        
+        
+    
+    
         self.root.mainloop()
+        
+    def open_link(self,url):
+        webbrowser.open(url)
 
 # Create an instance of the NewsApp
 obj = NewsApp()
+
+
+
+# import requests
+# from tkinter import Tk, Label, Button, Frame, BOTH, LEFT, RIGHT
+# from PIL import Image, ImageTk
+# from urllib.request import urlopen, Request
+# import io
+# import webbrowser
+
+# class NewsApp:
+#     def __init__(self):
+#         # Fetch data
+#         self.data = requests.get("https://newsdata.io/api/1/latest?country=bd&apikey=pub_511242bc4a4b82b34f0192f0d27534c645d43").json()
+#         self.current_index = 0  # Track the current news item index
+        
+#         # Initial GUI load
+#         self.load_gui()
+        
+#         # Load the first news item
+#         self.load_news_item(self.current_index)
+        
+#     def load_gui(self):
+#         self.root = Tk()
+#         self.root.geometry("350x600")
+#         self.root.title("News App")
+#         self.root.resizable(0, 0)
+#         self.root.configure(background='black')
+        
+#     def clear(self):
+#         for widget in self.root.pack_slaves():
+#             widget.destroy()
+    
+#     def load_news_item(self, index):
+#         # Clear the screen
+#         self.clear()
+        
+#         # Load and display image
+#         img_url = self.data['results'][index]['image_url']
+#         req = Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
+#         raw_image_data = urlopen(req).read()
+        
+#         image = Image.open(io.BytesIO(raw_image_data))
+#         resized_img = image.resize((350, 250))
+#         photo = ImageTk.PhotoImage(resized_img)
+        
+#         img_label = Label(self.root, image=photo)
+#         img_label.image = photo  # Keep a reference to the image to prevent garbage collection
+#         img_label.pack()
+
+#         # Heading
+#         heading = Label(
+#             self.root,
+#             text=self.data['results'][index]['title'],
+#             bg='black',
+#             fg='white',
+#             wraplength=350,
+#             justify='center'
+#         )
+#         heading.pack(pady=(10, 20))
+#         heading.config(font=('verdana', 15))
+        
+#         # Details
+#         details = Label(
+#             self.root,
+#             text=self.data['results'][index]['description'],
+#             bg='black',
+#             fg='white',
+#             wraplength=350,
+#             justify='center'
+#         )
+#         details.pack(pady=(2, 20))
+#         details.config(font=('verdana', 12))
+        
+#         # Frame for buttons
+#         frame = Frame(self.root, bg='black')
+#         frame.pack(expand=True, fill=BOTH)
+        
+#         prevBtn = Button(frame, text='Prev', width=10, height=1, command=self.show_prev_news)
+#         prevBtn.pack(side=LEFT)
+        
+#         nextBtn = Button(frame, text='Next', width=10, height=1, command=self.show_next_news)
+#         nextBtn.pack(side=RIGHT)
+        
+#         readBtn = Button(frame, text='Read More', width=10, height=1, command=self.open_news_link)
+#         readBtn.place(relx=0.5, rely=0.5, anchor='center')
+        
+#         self.root.mainloop()
+
+#     def show_next_news(self):
+#         if self.current_index < len(self.data['results']) - 1:
+#             self.current_index += 1
+#             self.load_news_item(self.current_index)
+
+#     def show_prev_news(self):
+#         if self.current_index > 0:
+#             self.current_index -= 1
+#             self.load_news_item(self.current_index)
+            
+#     def open_news_link(self):
+#         news_url = self.data['results'][self.current_index]['link']
+#         webbrowser.open(news_url)
+
+# # Create an instance of the NewsApp
+# obj = NewsApp()
