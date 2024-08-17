@@ -77,19 +77,16 @@ class NewsApp:
         frame = Frame(self.root,bg='black')
         frame.pack(expand=True,fill=BOTH)
         
-        # if index!=0:
+        if index!=0:
             
-        #     prevBtn = Button(frame,text='Prev',width=10,height=1,command=lambda:self.load_news_item(index-1))
-        #     prevBtn.pack(side=LEFT)
-        prevBtn = Button(frame,text='Prev',width=10,height=1,command=lambda:self.load_news_item(index-1))
-        prevBtn.pack(side=LEFT)
+            prevBtn = Button(frame,text='Prev',width=10,height=1,command=lambda:self.load_news_item(index-1))
+            prevBtn.pack(side=LEFT)
+        
 
         
-        # if index!=len(self.data['results'])-1:
-        #     nextBtn = Button(frame,text='Next',width=10,height=1,command=lambda:self.load_news_item(index+1))
-        #     nextBtn.pack(side=RIGHT)
-        nextBtn = Button(frame,text='Next',width=10,height=1,command=lambda:self.load_news_item(index+1))
-        nextBtn.pack(side=RIGHT)
+        if index!=len(self.data['results'])-1:
+            nextBtn = Button(frame,text='Next',width=10,height=1,command=lambda:self.load_news_item(index+1))
+            nextBtn.pack(side=RIGHT)
         
 
         
